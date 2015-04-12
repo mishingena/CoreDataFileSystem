@@ -18,10 +18,10 @@ class ImageTransformer: NSValueTransformer {
     }
     
     override func transformedValue(value: AnyObject?) -> AnyObject? {
-        return UIImageJPEGRepresentation(value as UIImage, 0.8)
+        return UIImageJPEGRepresentation(value as! UIImage, 0.8)
     }
     
     override func reverseTransformedValue(value: AnyObject?) -> AnyObject? {
-        return UIImage(data: value as NSData)
+        return UIImage(data: value as! NSData)
     }
 }

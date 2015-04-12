@@ -17,4 +17,11 @@ class Folder: NSManagedObject {
     @NSManaged var imageFiles: NSSet
     @NSManaged var textFiles: NSSet
 
+    class var entity: NSEntityDescription {
+        return NSEntityDescription.entityForName("Folder", inManagedObjectContext: CoreDataManager.sharedInstance.context)!
+    }
+    
+    convenience init() {
+        self.init(entity: Folder.entity, insertIntoManagedObjectContext: CoreDataManager.sharedInstance.context)
+    }
 }

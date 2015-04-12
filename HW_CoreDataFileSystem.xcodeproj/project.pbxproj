@@ -19,6 +19,7 @@
 		B297F6AC1AD7A1580012CCE5 /* TextFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297F6AB1AD7A1580012CCE5 /* TextFile.swift */; };
 		B297F6AE1AD7A1580012CCE5 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297F6AD1AD7A1580012CCE5 /* Folder.swift */; };
 		B297F6B01AD7A1BE0012CCE5 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297F6AF1AD7A1BE0012CCE5 /* ImageTransformer.swift */; };
+		B2A877F21ADAAD0B0086D67D /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A877F11ADAAD0B0086D67D /* Element.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		B297F6AB1AD7A1580012CCE5 /* TextFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFile.swift; sourceTree = "<group>"; };
 		B297F6AD1AD7A1580012CCE5 /* Folder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		B297F6AF1AD7A1BE0012CCE5 /* ImageTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
+		B2A877F11ADAAD0B0086D67D /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				B297F6AB1AD7A1580012CCE5 /* TextFile.swift */,
 				B297F6A91AD7A1570012CCE5 /* ImageFile.swift */,
 				B297F6AF1AD7A1BE0012CCE5 /* ImageTransformer.swift */,
+				B2A877F11ADAAD0B0086D67D /* Element.swift */,
 				B20A14141AD6FC5D001BC1C1 /* HW_CoreDataFileSystem.xcdatamodeld */,
 			);
 			name = Model;
@@ -256,6 +259,7 @@
 			files = (
 				B297F6AC1AD7A1580012CCE5 /* TextFile.swift in Sources */,
 				B20A14161AD6FC5D001BC1C1 /* HW_CoreDataFileSystem.xcdatamodeld in Sources */,
+				B2A877F21ADAAD0B0086D67D /* Element.swift in Sources */,
 				B20A14131AD6FC5D001BC1C1 /* AppDelegate.swift in Sources */,
 				B297F6A81AD79A1C0012CCE5 /* CoreDataManager.swift in Sources */,
 				B20A14361AD704D6001BC1C1 /* TableViewController.swift in Sources */,

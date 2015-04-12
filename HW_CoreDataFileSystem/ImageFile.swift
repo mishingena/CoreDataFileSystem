@@ -17,4 +17,11 @@ class ImageFile: NSManagedObject {
     @NSManaged var name: String
     @NSManaged var folder: Folder
 
+    class var entity: NSEntityDescription {
+        return NSEntityDescription.entityForName("ImageFile", inManagedObjectContext: CoreDataManager.sharedInstance.context)!
+    }
+    
+    convenience init() {
+        self.init(entity: ImageFile.entity, insertIntoManagedObjectContext: CoreDataManager.sharedInstance.context)
+    }
 }

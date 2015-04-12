@@ -13,5 +13,69 @@
             stopOnStyle = "0">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HW_CoreDataFileSystem/TableViewController.swift"
+            timestampString = "450556567.393814"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "loadData()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HW_CoreDataFileSystem.TableViewController.loadData (HW_CoreDataFileSystem.TableViewController)() -&gt; ()"
+                  moduleName = "HW_CoreDataFileSystem"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Gena/Documents/Swift%20Projects/HW_CoreDataFileSystem/HW_CoreDataFileSystem/TableViewController.swift"
+                  timestampString = "450556636.945823"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "87">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "HW_CoreDataFileSystem.TableViewController.(loadData (HW_CoreDataFileSystem.TableViewController) -&gt; () -&gt; ()).(closure #1)"
+                  moduleName = "HW_CoreDataFileSystem"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Gena/Documents/Swift%20Projects/HW_CoreDataFileSystem/HW_CoreDataFileSystem/TableViewController.swift"
+                  timestampString = "450556636.945972"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HW_CoreDataFileSystem/TableViewController.swift"
+            timestampString = "450556771.376124"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "119"
+            endingLineNumber = "119"
+            landmarkName = "addFolder(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
