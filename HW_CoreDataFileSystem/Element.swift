@@ -21,12 +21,19 @@ class Element: NSObject {
     var textFile: TextFile?
     var imageFile: ImageFile?
     
-    init(type: FileType) {
+    init(type: FileType, name: String) {
         self.fileType = type
         switch type {
-        case .Folder: folder = Folder()
-        case .TextFile: textFile = TextFile()
-        case .ImageFile: imageFile = ImageFile()
+        case .Folder:
+            folder = Folder()
+            folder?.name = name
+        case .TextFile:
+            textFile = TextFile()
+            textFile?.name = name
+            textFile?.text = ""
+        case .ImageFile:
+            imageFile = ImageFile()
+            imageFile?.name = name
         }
     }
     

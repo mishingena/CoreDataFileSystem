@@ -26,7 +26,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
                 self.folder = rootFolder
                 println(self.folder?.name)
                 self.title = self.folder?.name
-                self.loadData()
             }
         }
     }
@@ -72,8 +71,8 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         
         switch type {
         case .Folder: title = "Введите название папки"
-        case .ImageFile: title = "Введите название текстового файла"
-        case .TextFile: title = "Введите название изображения"
+        case .TextFile: title = "Введите название текстового файла"
+        case .ImageFile: title = "Введите название изображения"
         }
         
         let alertController = UIAlertController(title: title, message: "", preferredStyle: .Alert)
@@ -81,7 +80,15 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         let addAction = UIAlertAction(title: "Добавить", style: .Default) { (_) -> Void in
             let textFileld = alertController.textFields![0] as! UITextField
 //            self.addElement(textFileld.text, type: type)
-            self.addFolder(textFileld.text)
+//            self.addFolder(textFileld.text)
+            var newElement = Element(type: type, name: textFileld.text)
+//            newElement.folder?.name = textFileld.text
+//            CoreDataManager.sharedInstance.addElement(self.folder!, element: newElement)
+            CoreDataManager.sharedInstance.addElement(self.folder!, element: newElement, finished: { () -> () in
+                self.elements?.append(newElement)
+                self.tableView.reloadData()
+            })
+            
         }
         addAction.enabled = false
         
@@ -99,40 +106,33 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         self.presentViewController(alertController, animated: true) { () -> Void in }
     }
     
-    func addElement(name: String, type: FileType) {
-        self.folder?.folders = NSSet()
-        self.folder?.folders.setByAddingObject(Element(type: type))
-        var element = Element(type: type)
-        
-        switch type {
-        case .Folder: element.folder!.name = name
-        case .ImageFile: element.imageFile!.name = name
-        case .TextFile: element.textFile!.name = name
-        }
-        
-    }
-    
-    func addFolder(name: String) {
-        var newFolder = Folder()
-        newFolder.name = name
-        
-        var folders = NSMutableSet(set: self.folder!.folders)
-        folders.setByAddingObject(newFolder)
-        self.folder?.folders = folders
-        
-//        self.folder?.folders = NSSet(object: folder)
-        
-//        if let folders = self.folder?.folders {
-//            var set: NSMutableSet = folders
-//            
-//            set.setByAddingObject(folder)
-//        } else {
-//            self.folder?.folders = NSSet()
-//            self.folder?.folders.setByAddingObject(folder)
+//    func addElement(name: String, type: FileType) {
+//        self.folder?.folders = NSSet()
+//        self.folder?.folders.setByAddingObject(Element(type: type))
+//        var element = Element(type: type)
+//        
+//        switch type {
+//        case .Folder: element.folder!.name = name
+//        case .ImageFile: element.imageFile!.name = name
+//        case .TextFile: element.textFile!.name = name
 //        }
-        CoreDataManager.sharedInstance.save()
-        self.loadData()
-    }
+//        
+//    }
+    
+//    func addFolder(name: String) {
+//        var newElement = Element(type: .Folder)
+//        newElement.folder?.name = name
+//        
+//        var newFolder = Folder()
+//        newFolder.name = name
+//        
+//        var folders = NSMutableSet(set: self.folder!.folders)
+//        folders.addObject(newFolder)
+//        self.folder?.folders = folders
+//        
+//        CoreDataManager.sharedInstance.save()
+//        self.loadData()
+//    }
 
     // MARK: - Table view data source
 
@@ -152,12 +152,25 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! UITableViewCell
         
         if let element = self.elements?[indexPath.row] {
-            cell.textLabel?.text = element.folder?.name
+            var name = "no name"
+            switch element.fileType! {
+            case .Folder: name = element.folder!.name
+            case .TextFile: name = element.textFile!.name
+            case .ImageFile: name = element.imageFile!.name
+            }
+            cell.textLabel?.text = name
         }
-//        cell.textLabel?.text = self.elements[indexPath.row]
-        // Configure the cell...
 
         return cell
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if let element = self.elements?[indexPath.row] {
+            switch element.fileType! {
+            case .TextFile: self.performSegueWithIdentifier("segueViewTextFile", sender: element)
+            default: break
+            }
+        }
     }
     
 
@@ -196,14 +209,28 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
     }
     */
 
-    /*
+
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "segueViewTextFile" {
+            let destination = segue.destinationViewController as! TextFileViewController
+//            let element = sender as! Element
+//            if let textFile = element.textFile {
+//                if textFile.text != "" {
+                    destination.element = sender as? Element
+//                }
+//            }
+            
+//            if element.textFile?.text != nil {
+//                destination.text = element.textFile?.text
+//            }
+//            if let text = element.textFile?.name {
+//                destination.text = element.textFile?.name
+//            }
+//            destination.text = element.textFile?.text
+        }
     }
-    */
+
 
 }

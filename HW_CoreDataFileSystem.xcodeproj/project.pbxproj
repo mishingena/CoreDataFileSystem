@@ -14,6 +14,8 @@
 		B20A14201AD6FC5D001BC1C1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B20A141E1AD6FC5D001BC1C1 /* LaunchScreen.xib */; };
 		B20A142C1AD6FC5D001BC1C1 /* HW_CoreDataFileSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20A142B1AD6FC5D001BC1C1 /* HW_CoreDataFileSystemTests.swift */; };
 		B20A14361AD704D6001BC1C1 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20A14351AD704D6001BC1C1 /* TableViewController.swift */; };
+		B2952C341ADB015A00736247 /* TextFileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2952C331ADB015A00736247 /* TextFileViewController.swift */; };
+		B2952C361ADB016A00736247 /* ImageFileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2952C351ADB016A00736247 /* ImageFileViewController.swift */; };
 		B297F6A81AD79A1C0012CCE5 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297F6A71AD79A1C0012CCE5 /* CoreDataManager.swift */; };
 		B297F6AA1AD7A1570012CCE5 /* ImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297F6A91AD7A1570012CCE5 /* ImageFile.swift */; };
 		B297F6AC1AD7A1580012CCE5 /* TextFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297F6AB1AD7A1580012CCE5 /* TextFile.swift */; };
@@ -44,6 +46,8 @@
 		B20A142A1AD6FC5D001BC1C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B20A142B1AD6FC5D001BC1C1 /* HW_CoreDataFileSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_CoreDataFileSystemTests.swift; sourceTree = "<group>"; };
 		B20A14351AD704D6001BC1C1 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		B2952C331ADB015A00736247 /* TextFileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFileViewController.swift; sourceTree = "<group>"; };
+		B2952C351ADB016A00736247 /* ImageFileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageFileViewController.swift; sourceTree = "<group>"; };
 		B297F6A71AD79A1C0012CCE5 /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		B297F6A91AD7A1570012CCE5 /* ImageFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageFile.swift; sourceTree = "<group>"; };
 		B297F6AB1AD7A1580012CCE5 /* TextFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFile.swift; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 			isa = PBXGroup;
 			children = (
 				B20A14351AD704D6001BC1C1 /* TableViewController.swift */,
+				B2952C331ADB015A00736247 /* TextFileViewController.swift */,
+				B2952C351ADB016A00736247 /* ImageFileViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -260,8 +266,10 @@
 				B297F6AC1AD7A1580012CCE5 /* TextFile.swift in Sources */,
 				B20A14161AD6FC5D001BC1C1 /* HW_CoreDataFileSystem.xcdatamodeld in Sources */,
 				B2A877F21ADAAD0B0086D67D /* Element.swift in Sources */,
+				B2952C361ADB016A00736247 /* ImageFileViewController.swift in Sources */,
 				B20A14131AD6FC5D001BC1C1 /* AppDelegate.swift in Sources */,
 				B297F6A81AD79A1C0012CCE5 /* CoreDataManager.swift in Sources */,
+				B2952C341ADB015A00736247 /* TextFileViewController.swift in Sources */,
 				B20A14361AD704D6001BC1C1 /* TableViewController.swift in Sources */,
 				B297F6AA1AD7A1570012CCE5 /* ImageFile.swift in Sources */,
 				B297F6AE1AD7A1580012CCE5 /* Folder.swift in Sources */,

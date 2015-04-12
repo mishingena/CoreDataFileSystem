@@ -58,9 +58,6 @@ class CoreDataManager: NSObject {
             var error: NSError?
             let request = NSFetchRequest(entityName: "Folder")
             var results = self.context.executeFetchRequest(request, error: &error)
-            println(results?.count)
-            
-//            assert(results?.count < 2, "Error, more than one root folder")
             
             if let error = error {
                 abort()
@@ -98,6 +95,32 @@ class CoreDataManager: NSObject {
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 completion(elements)
+            })
+        })
+    }
+    
+    func addElement(folder: Folder, element: Element, finished:() -> ()) {
+        dispatch_async(queue, { () -> Void in
+            switch element.fileType! {
+            case .Folder:
+                var folders = NSMutableSet(set: folder.folders)
+                folders.addObject(element.folder!)
+                folder.folders = folders
+                self.save()
+            case .TextFile:
+                var textFiles = NSMutableSet(set: folder.textFiles)
+                textFiles.addObject(element.textFile!)
+                folder.textFiles = textFiles
+                self.save()
+            case .ImageFile:
+                var imageFiles = NSMutableSet(set: folder.imageFiles)
+                imageFiles.addObject(element.imageFile!)
+                self.save()
+            }
+        })
+        dispatch_barrier_async(queue, { () -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                finished()
             })
         })
     }
