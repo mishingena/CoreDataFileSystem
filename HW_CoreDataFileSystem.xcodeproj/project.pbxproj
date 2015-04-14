@@ -25,6 +25,7 @@
 		B2D8495F1ADD66AD00094B8A /* folder_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B2D8495C1ADD66AD00094B8A /* folder_icon@2x.png */; };
 		B2D849601ADD66AD00094B8A /* photo_file_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B2D8495D1ADD66AD00094B8A /* photo_file_icon@2x.png */; };
 		B2D849611ADD66AD00094B8A /* text_file_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B2D8495E1ADD66AD00094B8A /* text_file_icon@2x.png */; };
+		B2D849631ADD9C9100094B8A /* FileFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D849621ADD9C9100094B8A /* FileFolder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		B2D8495C1ADD66AD00094B8A /* folder_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "folder_icon@2x.png"; sourceTree = "<group>"; };
 		B2D8495D1ADD66AD00094B8A /* photo_file_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "photo_file_icon@2x.png"; sourceTree = "<group>"; };
 		B2D8495E1ADD66AD00094B8A /* text_file_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "text_file_icon@2x.png"; sourceTree = "<group>"; };
+		B2D849621ADD9C9100094B8A /* FileFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileFolder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,9 +146,7 @@
 				B20A14121AD6FC5D001BC1C1 /* AppDelegate.swift */,
 				B297F6A71AD79A1C0012CCE5 /* CoreDataManager.swift */,
 				B297F6AF1AD7A1BE0012CCE5 /* ImageTransformer.swift */,
-				B2631A481ADC40A000C14CB8 /* File.swift */,
-				B2631A4E1ADC433200C14CB8 /* FileImage.swift */,
-				B2631A4C1ADC433200C14CB8 /* FileText.swift */,
+				B2D849641ADDA3DB00094B8A /* CoreData Classes */,
 				B20A14141AD6FC5D001BC1C1 /* HW_CoreDataFileSystem.xcdatamodeld */,
 			);
 			name = Model;
@@ -170,6 +170,17 @@
 				B2952C351ADB016A00736247 /* ImageFileViewController.swift */,
 			);
 			name = Controller;
+			sourceTree = "<group>";
+		};
+		B2D849641ADDA3DB00094B8A /* CoreData Classes */ = {
+			isa = PBXGroup;
+			children = (
+				B2631A481ADC40A000C14CB8 /* File.swift */,
+				B2D849621ADD9C9100094B8A /* FileFolder.swift */,
+				B2631A4E1ADC433200C14CB8 /* FileImage.swift */,
+				B2631A4C1ADC433200C14CB8 /* FileText.swift */,
+			);
+			name = "CoreData Classes";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -282,6 +293,7 @@
 				B2952C361ADB016A00736247 /* ImageFileViewController.swift in Sources */,
 				B20A14131AD6FC5D001BC1C1 /* AppDelegate.swift in Sources */,
 				B297F6A81AD79A1C0012CCE5 /* CoreDataManager.swift in Sources */,
+				B2D849631ADD9C9100094B8A /* FileFolder.swift in Sources */,
 				B2952C341ADB015A00736247 /* TextFileViewController.swift in Sources */,
 				B20A14361AD704D6001BC1C1 /* TableViewController.swift in Sources */,
 				B2631A4F1ADC433200C14CB8 /* FileImage.swift in Sources */,

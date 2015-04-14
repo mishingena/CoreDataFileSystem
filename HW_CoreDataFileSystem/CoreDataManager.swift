@@ -52,15 +52,15 @@ class CoreDataManager: NSObject {
         super.init()
     }
     
-    func getRootFile(completion:(File) -> ()) {
+    func getRootFolder(completion:(FileFolder) -> ()) {
         dispatch_async(queue, { () -> Void in
             var error: NSError?
-            let request = NSFetchRequest(entityName: "File")
+            let request = NSFetchRequest(entityName: "FileFolder")
             let predicate = NSPredicate(format: "isRoot == true")
             request.predicate = predicate
-            let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
-            let sortDescriptors = NSArray(object: sortDescriptor)
-            request.sortDescriptors = sortDescriptors as [AnyObject]
+//            let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
+//            let sortDescriptors = NSArray(object: sortDescriptor)
+//            request.sortDescriptors = sortDescriptors as [AnyObject]
             
             var result = self.context.executeFetchRequest(request, error: &error)
             
@@ -70,25 +70,25 @@ class CoreDataManager: NSObject {
             }
             
             if result?.count == 0 {
-                let file = File(name: "Root")
-                file.isRoot = true
+                let rootFolder = FileFolder(name: "Root")
+                rootFolder.isRoot = true
                 self.save()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    completion(file)
+                    completion(rootFolder)
                 })
             } else {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    completion(result?.first as! File)
+                    completion(result?.first as! FileFolder)
                 })
             }
         })
     }
     
-    func addObjectToFile(file: File, object: File, completed:() -> ()) {
+    func addFileToFolder(folder: FileFolder, file: File, completed:() -> ()) {
         dispatch_async(queue, { () -> Void in
-            var files = NSMutableSet(set: file.files)
-            files.addObject(object)
-            file.files = files
+            var files = NSMutableSet(set: folder.files)
+            files.addObject(file)
+            folder.files = files
             self.save()
         })
         dispatch_barrier_async(queue, { () -> Void in

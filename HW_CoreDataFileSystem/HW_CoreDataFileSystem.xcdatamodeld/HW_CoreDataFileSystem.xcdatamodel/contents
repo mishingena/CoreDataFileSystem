@@ -2,8 +2,10 @@
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D131" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="File" representedClassName="File" syncable="YES">
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="isRoot" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="FileFolder" representedClassName="FileFolder" parentEntity="File" syncable="YES">
+        <attribute name="isRoot" optional="YES" attributeType="Boolean" syncable="YES"/>
         <relationship name="files" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="File" syncable="YES"/>
     </entity>
     <entity name="FileImage" representedClassName="FileImage" parentEntity="File" syncable="YES">
@@ -13,8 +15,9 @@
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="File" positionX="-108" positionY="270" width="128" height="105"/>
+        <element name="File" positionX="-108" positionY="270" width="128" height="75"/>
         <element name="FileImage" positionX="63" positionY="144" width="128" height="60"/>
         <element name="FileText" positionX="54" positionY="135" width="128" height="60"/>
+        <element name="FileFolder" positionX="-18" positionY="243" width="128" height="75"/>
     </elements>
 </model>

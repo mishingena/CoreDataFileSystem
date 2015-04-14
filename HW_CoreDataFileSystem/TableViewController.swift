@@ -10,7 +10,7 @@ import UIKit
 
 class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    var file: File?
+    var folder: FileFolder?
     var selectedImage: UIImage?
     var selectedIndexPath: NSIndexPath?
     
@@ -22,20 +22,20 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.navigationItem.rightBarButtonItem = addButton
         self.navigationItem.rightBarButtonItem?.enabled = true
         
-        if self.file == nil {
-            CoreDataManager.sharedInstance.getRootFile({ (rootFile) -> () in
-                self.file = rootFile
-                self.title = self.file?.name
+        if self.folder == nil {
+            CoreDataManager.sharedInstance.getRootFolder({ (rootFile) -> () in
+                self.folder = rootFile
+                self.title = self.folder?.name
                 self.tableView.reloadData()
             })
         } else {
-            self.title = self.file?.name
+            self.title = self.folder?.name
         }
     }
     
     override func viewDidAppear(animated: Bool) {
         if let indexPath = self.selectedIndexPath {
-            println("indexPath.row: \(indexPath.row)")
+//            println("indexPath.row: \(indexPath.row)")
             self.tableView.beginUpdates()
             let array = NSArray(object: indexPath)
             self.tableView.reloadRowsAtIndexPaths(array as [AnyObject], withRowAnimation: UITableViewRowAnimation.Automatic)
@@ -56,8 +56,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         
         let createImageFileAction = UIAlertAction(title: "Изображение", style: .Default) { (alert: UIAlertAction!) -> Void in
             self.showImagePicker()
-//            self.showEnterNameAlert(.ImageFile)
-            
         }
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .Cancel) { (alert: UIAlertAction!) -> Void in }
@@ -85,23 +83,23 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
             
             switch type {
             case .Folder:
-                let newFile = File(name: textFileld.text)
+                let newFolder = FileFolder(name: textFileld.text)
                 
-                CoreDataManager.sharedInstance.addObjectToFile(self.file!, object: newFile, completed: { () -> () in
+                CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newFolder, completed: { () -> () in
                     self.tableView.reloadData()
                 })
 
             case .TextFile:
-                let newFile = FileText(name: textFileld.text)
+                let newTextFile = FileText(name: textFileld.text)
                 
-                CoreDataManager.sharedInstance.addObjectToFile(self.file!, object: newFile, completed: { () -> () in
+                CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newTextFile, completed: { () -> () in
                     self.tableView.reloadData()
                 })
                 
             case .ImageFile:
-                let newFile = FileImage(name: textFileld.text, image: self.selectedImage!)
+                let newImageFile = FileImage(name: textFileld.text, image: self.selectedImage!)
                 
-                CoreDataManager.sharedInstance.addObjectToFile(self.file!, object: newFile, completed: { () -> () in
+                CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newImageFile, completed: { () -> () in
                     self.tableView.reloadData()
                 })
 
@@ -147,8 +145,8 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let file = self.file {
-            return file.files.count
+        if let folder = self.folder {
+            return folder.files.count
         }
         return 0
     }
@@ -157,16 +155,20 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FileCell
 
-        if let file = self.file {
-            let array = file.files.allObjects as! [File]
+        if let folder = self.folder {
+            let array = folder.files.allObjects as! [File]
             let file = array[indexPath.row]
+            
             if file.isKindOfClass(FileText.self) {
                 cell.imgView.image = UIImage(named: "text_file_icon")
                 cell.title.text = file.name
-            } else if file.isKindOfClass(FileImage.self) {
+            }
+            if file.isKindOfClass(FileImage.self) {
                 cell.imageView?.image = UIImage(named: "photo_file_icon")
                 cell.title.text = file.name
-            } else if file.isKindOfClass(File.self) {
+            }
+            if file.isKindOfClass(FileFolder.self) {
+                let file = file as! FileFolder
                 cell.imgView.image = UIImage(named: "folder_icon")
                 cell.title.text = file.name
                 cell.detail.text = "Файлов: \(file.files.count)"
@@ -177,16 +179,16 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.selectedIndexPath = indexPath
-        let array = self.file!.files.allObjects as! [File]
+        let array = self.folder!.files.allObjects as! [File]
         let file = array[indexPath.row]
         
         if file.isKindOfClass(FileText.self) {
             self.performSegueWithIdentifier("segueViewTextFile", sender: file)
-        } else
+        }
         if file.isKindOfClass(FileImage.self) {
             self.performSegueWithIdentifier("segueViewImageFile", sender: file)
-        } else
-        if file.isKindOfClass(File.self) {
+        }
+        if file.isKindOfClass(FileFolder.self) {
             self.performSegueWithIdentifier("segueToTableView", sender: file)
         }
     }
@@ -233,8 +235,8 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "segueToTableView" {
             let destination = segue.destinationViewController as! TableViewController
-            let file = sender as? File
-            destination.file = sender as? File
+            let folder = sender as? FileFolder
+            destination.folder = sender as? FileFolder
         }
         if segue.identifier == "segueViewTextFile" {
             let destination = segue.destinationViewController as! TextFileViewController
