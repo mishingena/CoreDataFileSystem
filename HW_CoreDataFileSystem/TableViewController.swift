@@ -13,6 +13,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     var folder: FileFolder?
     var selectedImage: UIImage?
     var selectedIndexPath: NSIndexPath?
+    var files: [File]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,23 +26,26 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         if self.folder == nil {
             CoreDataManager.sharedInstance.getRootFolder({ (rootFile) -> () in
                 self.folder = rootFile
-                self.title = self.folder?.name
-                self.tableView.reloadData()
+                self.loadData()
+                
             })
         } else {
-            self.title = self.folder?.name
+            self.loadData()
         }
+    }
+    
+    func loadData() {
+        self.title = self.folder?.name
+        self.files = CoreDataManager.getSortedFilesFromFolder(self.folder!)
+        self.tableView.reloadData()
     }
     
     override func viewDidAppear(animated: Bool) {
         if let indexPath = self.selectedIndexPath {
-//            println("indexPath.row: \(indexPath.row)")
             self.tableView.beginUpdates()
-            let array = NSArray(object: indexPath)
-            self.tableView.reloadRowsAtIndexPaths(array as [AnyObject], withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
             self.tableView.endUpdates()
         }
-        self.tableView.reloadData()
     }
     
     func addButtonPressed(sender: AnyObject) {
@@ -80,27 +84,31 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         let cancelAction = UIAlertAction(title: "Отмена", style: .Cancel) { (_) -> Void in }
         let addAction = UIAlertAction(title: "Добавить", style: .Default) { (_) -> Void in
             let textFileld = alertController.textFields![0] as! UITextField
+            let indexPath = NSIndexPath(forRow: self.folder!.files.count, inSection: 0)
             
             switch type {
             case .Folder:
                 let newFolder = FileFolder(name: textFileld.text)
                 
                 CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newFolder, completed: { () -> () in
-                    self.tableView.reloadData()
+                    self.files?.append(newFolder)
+                    self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                 })
 
             case .TextFile:
                 let newTextFile = FileText(name: textFileld.text)
                 
                 CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newTextFile, completed: { () -> () in
-                    self.tableView.reloadData()
+                    self.files?.append(newTextFile)
+                    self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                 })
                 
             case .ImageFile:
                 let newImageFile = FileImage(name: textFileld.text, image: self.selectedImage!)
                 
                 CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newImageFile, completed: { () -> () in
-                    self.tableView.reloadData()
+                    self.files?.append(newImageFile)
+                    self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                 })
 
             }
@@ -145,17 +153,15 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.folder?.files.count ?? 0
+        return self.files?.count ?? 0
     }
 
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FileCell
 
-        if let folder = self.folder {
-            let array = folder.files.allObjects as! [File]
-            let file = array[indexPath.row]
-            
+        if let files = self.files {
+            let file  = files[indexPath.row]
             if file.isKindOfClass(FileText.self) {
                 cell.imgView.image = UIImage(named: "text_file_icon")
                 cell.title.text = file.name
@@ -176,8 +182,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.selectedIndexPath = indexPath
-        let array = self.folder!.files.allObjects as! [File]
-        let file = array[indexPath.row]
+        let file  = self.files![indexPath.row]
         
         if file.isKindOfClass(FileText.self) {
             self.performSegueWithIdentifier("segueViewTextFile", sender: file)
@@ -196,17 +201,14 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
 
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            let array = self.folder?.files.allObjects as! [File]
-            let file = array[indexPath.row]
-//
+            let file = self.files![indexPath.row]
+            self.files?.removeAtIndex(indexPath.row)
+            
             CoreDataManager.sharedInstance.deleteFile(file, fromFolder: self.folder!, completed: { () -> () in
-//                self.tableView.reloadData()
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
             })
             
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
 
     /*

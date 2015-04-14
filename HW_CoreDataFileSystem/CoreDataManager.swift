@@ -58,9 +58,6 @@ class CoreDataManager: NSObject {
             let request = NSFetchRequest(entityName: "FileFolder")
             let predicate = NSPredicate(format: "isRoot == true")
             request.predicate = predicate
-//            let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
-//            let sortDescriptors = NSArray(object: sortDescriptor)
-//            request.sortDescriptors = sortDescriptors as [AnyObject]
             
             var result = self.context.executeFetchRequest(request, error: &error)
             
@@ -121,6 +118,14 @@ class CoreDataManager: NSObject {
                 completed()
             })
         })
+    }
+    
+    class func getSortedFilesFromFolder(folder: FileFolder) -> [File] {
+        var array = folder.files.allObjects as! [File]
+        array.sort { (firstFile: File, secondFile:File) -> Bool in
+            return (firstFile.creationDate.compare(secondFile.creationDate) == NSComparisonResult.OrderedAscending ? true : false)
+        }
+        return array
     }
     
 }
