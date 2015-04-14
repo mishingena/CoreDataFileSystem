@@ -107,9 +107,13 @@ class CoreDataManager: NSObject {
         })
     }
     
-    func deleteFile(file: File, completed: () -> ()) {
+    func deleteFile(file: File, fromFolder folder: FileFolder, completed: () -> ()) {
         dispatch_async(queue, { () -> Void in
-            self.context.deleteObject(file)
+            let fileToDelete = file
+            var files = NSMutableSet(set: folder.files)
+            files.removeObject(file)
+            folder.files = files
+            self.context.deleteObject(fileToDelete)
             self.save()
         })
         dispatch_barrier_async(queue, { () -> Void in

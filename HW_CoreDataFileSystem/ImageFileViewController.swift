@@ -13,7 +13,6 @@ class ImageFileViewController: UIViewController {
     var file: FileImage?
     @IBOutlet var imageView: UIImageView!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.imageView.image = self.file?.image

@@ -145,10 +145,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let folder = self.folder {
-            return folder.files.count
-        }
-        return 0
+        return self.folder?.files.count ?? 0
     }
 
     
@@ -193,26 +190,24 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         }
     }
     
-
-    /*
-    // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the specified item to be editable.
         return true
     }
-    */
 
-    /*
-    // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            let array = self.folder?.files.allObjects as! [File]
+            let file = array[indexPath.row]
+//
+            CoreDataManager.sharedInstance.deleteFile(file, fromFolder: self.folder!, completed: { () -> () in
+//                self.tableView.reloadData()
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            })
+            
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
 
     /*
     // Override to support rearranging the table view.
