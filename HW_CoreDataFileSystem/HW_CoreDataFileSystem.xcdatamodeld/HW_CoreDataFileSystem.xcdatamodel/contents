@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C1514" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="Folder" representedClassName="Folder" syncable="YES">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D131" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="File" representedClassName="File" syncable="YES">
+        <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="isRoot" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="folders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Folder" inverseName="folders" inverseEntity="Folder" syncable="YES"/>
-        <relationship name="imageFiles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ImageFile" inverseName="folder" inverseEntity="ImageFile" syncable="YES"/>
-        <relationship name="textFiles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TextFile" inverseName="folder" inverseEntity="TextFile" syncable="YES"/>
+        <relationship name="files" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="File" syncable="YES"/>
     </entity>
-    <entity name="ImageFile" representedClassName="ImageFile" syncable="YES">
+    <entity name="FileImage" representedClassName="FileImage" parentEntity="File" syncable="YES">
         <attribute name="image" optional="YES" attributeType="Transformable" valueTransformerName="ImageTransformer" syncable="YES"/>
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="folder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Folder" inverseName="imageFiles" inverseEntity="Folder" syncable="YES"/>
     </entity>
-    <entity name="TextFile" representedClassName="TextFile" syncable="YES">
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    <entity name="FileText" representedClassName="FileText" parentEntity="File" syncable="YES">
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="folder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Folder" inverseName="textFiles" inverseEntity="Folder" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Folder" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="TextFile" positionX="-54" positionY="-9" width="128" height="88"/>
-        <element name="ImageFile" positionX="-36" positionY="9" width="128" height="88"/>
+        <element name="File" positionX="-108" positionY="270" width="128" height="105"/>
+        <element name="FileImage" positionX="63" positionY="144" width="128" height="60"/>
+        <element name="FileText" positionX="54" positionY="135" width="128" height="60"/>
     </elements>
 </model>

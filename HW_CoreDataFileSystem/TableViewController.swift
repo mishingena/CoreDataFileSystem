@@ -8,11 +8,11 @@
 
 import UIKit
 
-class TableViewController: UITableViewController, UIAlertViewDelegate {
+class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    var folder: Folder?
-    //вот такие костыли приходится делать из-за типизации объектов
-    var elements: [Element]?
+    var file: File?
+    var selectedImage: UIImage?
+    var selectedIndexPath: NSIndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,27 +20,28 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonPressed:")
         
         self.navigationItem.rightBarButtonItem = addButton
+        self.navigationItem.rightBarButtonItem?.enabled = true
         
-        if self.folder == nil {
-            CoreDataManager.sharedInstance.getRootFolder { (rootFolder) -> () in
-                self.folder = rootFolder
-                println(self.folder?.name)
-                self.title = self.folder?.name
-            }
+        if self.file == nil {
+            CoreDataManager.sharedInstance.getRootFile({ (rootFile) -> () in
+                self.file = rootFile
+                self.title = self.file?.name
+                self.tableView.reloadData()
+            })
+        } else {
+            self.title = self.file?.name
         }
     }
     
     override func viewDidAppear(animated: Bool) {
-        self.loadData()
-    }
-    
-    func loadData() {
-        if let folder = self.folder {
-            CoreDataManager.sharedInstance.getElementsFromFolder(self.folder!, completion: { (elements) -> () in
-                self.elements = elements
-                self.tableView.reloadData()
-            })
+        if let indexPath = self.selectedIndexPath {
+            println("indexPath.row: \(indexPath.row)")
+            self.tableView.beginUpdates()
+            let array = NSArray(object: indexPath)
+            self.tableView.reloadRowsAtIndexPaths(array as [AnyObject], withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.endUpdates()
         }
+        self.tableView.reloadData()
     }
     
     func addButtonPressed(sender: AnyObject) {
@@ -54,7 +55,9 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         }
         
         let createImageFileAction = UIAlertAction(title: "Изображение", style: .Default) { (alert: UIAlertAction!) -> Void in
-            self.showEnterNameAlert(.ImageFile)
+            self.showImagePicker()
+//            self.showEnterNameAlert(.ImageFile)
+            
         }
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .Cancel) { (alert: UIAlertAction!) -> Void in }
@@ -79,15 +82,30 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         let cancelAction = UIAlertAction(title: "Отмена", style: .Cancel) { (_) -> Void in }
         let addAction = UIAlertAction(title: "Добавить", style: .Default) { (_) -> Void in
             let textFileld = alertController.textFields![0] as! UITextField
-//            self.addElement(textFileld.text, type: type)
-//            self.addFolder(textFileld.text)
-            var newElement = Element(type: type, name: textFileld.text)
-//            newElement.folder?.name = textFileld.text
-//            CoreDataManager.sharedInstance.addElement(self.folder!, element: newElement)
-            CoreDataManager.sharedInstance.addElement(self.folder!, element: newElement, finished: { () -> () in
-                self.elements?.append(newElement)
-                self.tableView.reloadData()
-            })
+            
+            switch type {
+            case .Folder:
+                let newFile = File(name: textFileld.text)
+                
+                CoreDataManager.sharedInstance.addObjectToFile(self.file!, object: newFile, completed: { () -> () in
+                    self.tableView.reloadData()
+                })
+
+            case .TextFile:
+                let newFile = FileText(name: textFileld.text)
+                
+                CoreDataManager.sharedInstance.addObjectToFile(self.file!, object: newFile, completed: { () -> () in
+                    self.tableView.reloadData()
+                })
+                
+            case .ImageFile:
+                let newFile = FileImage(name: textFileld.text, image: self.selectedImage!)
+                
+                CoreDataManager.sharedInstance.addObjectToFile(self.file!, object: newFile, completed: { () -> () in
+                    self.tableView.reloadData()
+                })
+
+            }
             
         }
         addAction.enabled = false
@@ -106,33 +124,21 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
         self.presentViewController(alertController, animated: true) { () -> Void in }
     }
     
-//    func addElement(name: String, type: FileType) {
-//        self.folder?.folders = NSSet()
-//        self.folder?.folders.setByAddingObject(Element(type: type))
-//        var element = Element(type: type)
-//        
-//        switch type {
-//        case .Folder: element.folder!.name = name
-//        case .ImageFile: element.imageFile!.name = name
-//        case .TextFile: element.textFile!.name = name
-//        }
-//        
-//    }
+    // MARK: - Image picker
     
-//    func addFolder(name: String) {
-//        var newElement = Element(type: .Folder)
-//        newElement.folder?.name = name
-//        
-//        var newFolder = Folder()
-//        newFolder.name = name
-//        
-//        var folders = NSMutableSet(set: self.folder!.folders)
-//        folders.addObject(newFolder)
-//        self.folder?.folders = folders
-//        
-//        CoreDataManager.sharedInstance.save()
-//        self.loadData()
-//    }
+    func showImagePicker() {
+        let picker = UIImagePickerController()
+        picker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        picker.delegate = self
+        self.presentViewController(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
+        self.selectedImage = image
+        self.dismissViewControllerAnimated(true, completion: nil)
+        self.showEnterNameAlert(.ImageFile)
+    }
+    
 
     // MARK: - Table view data source
 
@@ -141,35 +147,47 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let elemets = self.elements {
-            return elements!.count
+        if let file = self.file {
+            return file.files.count
         }
         return 0
     }
 
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! UITableViewCell
-        
-        if let element = self.elements?[indexPath.row] {
-            var name = "no name"
-            switch element.fileType! {
-            case .Folder: name = element.folder!.name
-            case .TextFile: name = element.textFile!.name
-            case .ImageFile: name = element.imageFile!.name
-            }
-            cell.textLabel?.text = name
-        }
+        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FileCell
 
+        if let file = self.file {
+            let array = file.files.allObjects as! [File]
+            let file = array[indexPath.row]
+            if file.isKindOfClass(FileText.self) {
+                cell.imgView.image = UIImage(named: "text_file_icon")
+                cell.title.text = file.name
+            } else if file.isKindOfClass(FileImage.self) {
+                cell.imageView?.image = UIImage(named: "photo_file_icon")
+                cell.title.text = file.name
+            } else if file.isKindOfClass(File.self) {
+                cell.imgView.image = UIImage(named: "folder_icon")
+                cell.title.text = file.name
+                cell.detail.text = "Файлов: \(file.files.count)"
+            }
+        }
         return cell
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let element = self.elements?[indexPath.row] {
-            switch element.fileType! {
-            case .TextFile: self.performSegueWithIdentifier("segueViewTextFile", sender: element)
-            default: break
-            }
+        self.selectedIndexPath = indexPath
+        let array = self.file!.files.allObjects as! [File]
+        let file = array[indexPath.row]
+        
+        if file.isKindOfClass(FileText.self) {
+            self.performSegueWithIdentifier("segueViewTextFile", sender: file)
+        } else
+        if file.isKindOfClass(FileImage.self) {
+            self.performSegueWithIdentifier("segueViewImageFile", sender: file)
+        } else
+        if file.isKindOfClass(File.self) {
+            self.performSegueWithIdentifier("segueToTableView", sender: file)
         }
     }
     
@@ -213,22 +231,18 @@ class TableViewController: UITableViewController, UIAlertViewDelegate {
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "segueToTableView" {
+            let destination = segue.destinationViewController as! TableViewController
+            let file = sender as? File
+            destination.file = sender as? File
+        }
         if segue.identifier == "segueViewTextFile" {
             let destination = segue.destinationViewController as! TextFileViewController
-//            let element = sender as! Element
-//            if let textFile = element.textFile {
-//                if textFile.text != "" {
-                    destination.element = sender as? Element
-//                }
-//            }
-            
-//            if element.textFile?.text != nil {
-//                destination.text = element.textFile?.text
-//            }
-//            if let text = element.textFile?.name {
-//                destination.text = element.textFile?.name
-//            }
-//            destination.text = element.textFile?.text
+            destination.file = sender as? FileText
+        }
+        if segue.identifier == "segueViewImageFile" {
+            let destination = segue.destinationViewController as! ImageFileViewController
+            destination.file = sender as? FileImage
         }
     }
 

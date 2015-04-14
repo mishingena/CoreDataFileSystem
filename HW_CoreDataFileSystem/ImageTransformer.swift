@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Foundation
 
 class ImageTransformer: NSValueTransformer {
     override class func transformedValueClass() -> AnyClass {

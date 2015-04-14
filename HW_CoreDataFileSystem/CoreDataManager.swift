@@ -10,12 +10,11 @@ import UIKit
 import CoreData
 import Foundation
 
-//enum Element {
-//    case TypeFolder(Folder)
-//    case TypeTextFile(TextFile)
-//    case TypeImageFile(ImageFile)
-//}
-
+enum FileType {
+    case Folder
+    case TextFile
+    case ImageFile
+}
 
 class CoreDataManager: NSObject {
     
@@ -53,74 +52,48 @@ class CoreDataManager: NSObject {
         super.init()
     }
     
-    func getRootFolder(completion:(Folder) -> ()) {
+    func getRootFile(completion:(File) -> ()) {
         dispatch_async(queue, { () -> Void in
             var error: NSError?
-            let request = NSFetchRequest(entityName: "Folder")
-            var results = self.context.executeFetchRequest(request, error: &error)
+            let request = NSFetchRequest(entityName: "File")
+            let predicate = NSPredicate(format: "isRoot == true")
+            request.predicate = predicate
+            let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
+            let sortDescriptors = NSArray(object: sortDescriptor)
+            request.sortDescriptors = sortDescriptors as [AnyObject]
             
+            var result = self.context.executeFetchRequest(request, error: &error)
+            
+            assert(result?.count < 2, "Error, more than one root folder")
             if let error = error {
                 abort()
             }
             
-            if let result = results?.first as? Folder {
+            if result?.count == 0 {
+                let file = File(name: "Root")
+                file.isRoot = true
+                self.save()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    completion(result as Folder)
+                    completion(file)
                 })
             } else {
-                let result = Folder()
-                result.name = "Root"
-                self.save()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    completion(result)
+                    completion(result?.first as! File)
                 })
             }
         })
     }
     
-    func getElementsFromFolder(folder: Folder, completion: ([Element]) -> ()) {
+    func addObjectToFile(file: File, object: File, completed:() -> ()) {
         dispatch_async(queue, { () -> Void in
-            var elements = [Element]()
-            
-            for image in folder.imageFiles {
-                elements.append(Element(imageFile: image as! ImageFile))
-            }
-            
-            for textFile in folder.textFiles {
-                elements.append(Element(textFile: textFile as! TextFile))
-            }
-            
-            for fol in folder.folders {
-                elements.append(Element(folder: fol as! Folder))
-            }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                completion(elements)
-            })
-        })
-    }
-    
-    func addElement(folder: Folder, element: Element, finished:() -> ()) {
-        dispatch_async(queue, { () -> Void in
-            switch element.fileType! {
-            case .Folder:
-                var folders = NSMutableSet(set: folder.folders)
-                folders.addObject(element.folder!)
-                folder.folders = folders
-                self.save()
-            case .TextFile:
-                var textFiles = NSMutableSet(set: folder.textFiles)
-                textFiles.addObject(element.textFile!)
-                folder.textFiles = textFiles
-                self.save()
-            case .ImageFile:
-                var imageFiles = NSMutableSet(set: folder.imageFiles)
-                imageFiles.addObject(element.imageFile!)
-                self.save()
-            }
+            var files = NSMutableSet(set: file.files)
+            files.addObject(object)
+            file.files = files
+            self.save()
         })
         dispatch_barrier_async(queue, { () -> Void in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                finished()
+                completed()
             })
         })
     }
@@ -131,6 +104,18 @@ class CoreDataManager: NSObject {
             if !self.context.save(&error){
                 abort()
             }
+        })
+    }
+    
+    func deleteFile(file: File, completed: () -> ()) {
+        dispatch_async(queue, { () -> Void in
+            self.context.deleteObject(file)
+            self.save()
+        })
+        dispatch_barrier_async(queue, { () -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                completed()
+            })
         })
     }
     
