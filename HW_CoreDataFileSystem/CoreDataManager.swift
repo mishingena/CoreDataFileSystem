@@ -25,6 +25,8 @@ class CoreDataManager: NSObject {
         return Singleton.instance
     }
     
+    
+    
     let coordinator: NSPersistentStoreCoordinator
     let model: NSManagedObjectModel
     let context: NSManagedObjectContext
@@ -128,4 +130,32 @@ class CoreDataManager: NSObject {
         return array
     }
     
+    class func moveFileFromAllFiles(inout allFiles: [File], fromIndex: Int, toIndex: Int) {
+        let file = allFiles[fromIndex]
+        allFiles.removeAtIndex(fromIndex)
+        allFiles.insert(file, atIndex: toIndex)
+        
+        for file in allFiles {
+            file.creationDate = NSDate()
+        }
+        CoreDataManager.sharedInstance.save()
+    }
+    
+    class func getSizeOfFile(file: File,inout total: Int) -> Int {
+        if file.isKindOfClass(FileText.self) {
+            let file = file as! FileText
+            total += file.text.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)
+        }
+        if file.isKindOfClass(FileImage.self) {
+            let file = file as! FileImage
+            total += UIImageJPEGRepresentation(file.image, 0).length
+        }
+        if file.isKindOfClass(FileFolder.self) {
+            let folder = file as! FileFolder
+            for file in folder.files {
+                self.getSizeOfFile(file as! File, total: &total)
+            }
+        }
+        return total
+    }
 }

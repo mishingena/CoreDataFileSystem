@@ -14,6 +14,7 @@
 		B20A14201AD6FC5D001BC1C1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B20A141E1AD6FC5D001BC1C1 /* LaunchScreen.xib */; };
 		B20A142C1AD6FC5D001BC1C1 /* HW_CoreDataFileSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20A142B1AD6FC5D001BC1C1 /* HW_CoreDataFileSystemTests.swift */; };
 		B20A14361AD704D6001BC1C1 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20A14351AD704D6001BC1C1 /* TableViewController.swift */; };
+		B234A4B01ADEBECA00D1B8BC /* FormattingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234A4AF1ADEBECA00D1B8BC /* FormattingHelper.swift */; };
 		B2631A491ADC40A000C14CB8 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2631A481ADC40A000C14CB8 /* File.swift */; };
 		B2631A4D1ADC433200C14CB8 /* FileText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2631A4C1ADC433200C14CB8 /* FileText.swift */; };
 		B2631A4F1ADC433200C14CB8 /* FileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2631A4E1ADC433200C14CB8 /* FileImage.swift */; };
@@ -50,6 +51,7 @@
 		B20A142A1AD6FC5D001BC1C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B20A142B1AD6FC5D001BC1C1 /* HW_CoreDataFileSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_CoreDataFileSystemTests.swift; sourceTree = "<group>"; };
 		B20A14351AD704D6001BC1C1 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		B234A4AF1ADEBECA00D1B8BC /* FormattingHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormattingHelper.swift; sourceTree = "<group>"; };
 		B2631A481ADC40A000C14CB8 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		B2631A4C1ADC433200C14CB8 /* FileText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileText.swift; sourceTree = "<group>"; };
 		B2631A4E1ADC433200C14CB8 /* FileImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileImage.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				B20A14121AD6FC5D001BC1C1 /* AppDelegate.swift */,
 				B297F6A71AD79A1C0012CCE5 /* CoreDataManager.swift */,
 				B297F6AF1AD7A1BE0012CCE5 /* ImageTransformer.swift */,
+				B234A4AF1ADEBECA00D1B8BC /* FormattingHelper.swift */,
 				B2D849641ADDA3DB00094B8A /* CoreData Classes */,
 				B20A14141AD6FC5D001BC1C1 /* HW_CoreDataFileSystem.xcdatamodeld */,
 			);
@@ -288,6 +291,7 @@
 			files = (
 				B2631A491ADC40A000C14CB8 /* File.swift in Sources */,
 				B2631A4D1ADC433200C14CB8 /* FileText.swift in Sources */,
+				B234A4B01ADEBECA00D1B8BC /* FormattingHelper.swift in Sources */,
 				B2D8495B1ADD640000094B8A /* FileCell.swift in Sources */,
 				B20A14161AD6FC5D001BC1C1 /* HW_CoreDataFileSystem.xcdatamodeld in Sources */,
 				B2952C361ADB016A00736247 /* ImageFileViewController.swift in Sources */,

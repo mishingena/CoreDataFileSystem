@@ -16,7 +16,6 @@ class TextFileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.textView.text = self.file?.text
     }
     

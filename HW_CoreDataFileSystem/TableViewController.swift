@@ -15,12 +15,19 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     var selectedIndexPath: NSIndexPath?
     var files: [File]?
     
+    var addButton: UIBarButtonItem?
+    var doneButton: UIBarButtonItem?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addGestures()
         
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonPressed:")
+        self.tableView.tableFooterView = UIView()
         
-        self.navigationItem.rightBarButtonItem = addButton
+        self.addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addButtonPressed:")
+        self.doneButton = UIBarButtonItem(title: "Готово", style: UIBarButtonItemStyle.Done, target: self, action: "doneButtonPressed:")
+        
+        self.navigationItem.rightBarButtonItem = self.addButton
         self.navigationItem.rightBarButtonItem?.enabled = true
         
         if self.folder == nil {
@@ -46,6 +53,27 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
             self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
             self.tableView.endUpdates()
         }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func addGestures() {
+        let lpgs = UILongPressGestureRecognizer(target: self, action: "handleLongPressGestures:")
+        lpgs.minimumPressDuration = 1.0
+        self.tableView.addGestureRecognizer(lpgs)
+    }
+    
+    func handleLongPressGestures(sender: UILongPressGestureRecognizer) {
+        self.tableView.setEditing(true, animated: true)
+        self.navigationItem.rightBarButtonItem = self.doneButton
+    }
+    
+    func doneButtonPressed(sender: AnyObject) {
+        self.tableView.setEditing(false, animated: true)
+        self.navigationItem.rightBarButtonItem = self.addButton
     }
     
     func addButtonPressed(sender: AnyObject) {
@@ -130,6 +158,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.presentViewController(alertController, animated: true) { () -> Void in }
     }
     
+    
     // MARK: - Image picker
     
     func showImagePicker() {
@@ -162,19 +191,25 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
 
         if let files = self.files {
             let file  = files[indexPath.row]
+            var total = 0
+            let sizeInBytes = CoreDataManager.getSizeOfFile(file, total: &total)
+            let size = FormattingHelper.getFormattedSizeFromByteSize(sizeInBytes)
+            
             if file.isKindOfClass(FileText.self) {
                 cell.imgView.image = UIImage(named: "text_file_icon")
                 cell.title.text = file.name
+                cell.detail.text = "Размер: \(size)"
             }
             if file.isKindOfClass(FileImage.self) {
                 cell.imageView?.image = UIImage(named: "photo_file_icon")
                 cell.title.text = file.name
+                cell.detail.text = "Размер: \(size)"
             }
             if file.isKindOfClass(FileFolder.self) {
                 let file = file as! FileFolder
                 cell.imgView.image = UIImage(named: "folder_icon")
                 cell.title.text = file.name
-                cell.detail.text = "Файлов: \(file.files.count)"
+                cell.detail.text = "Файлов: \(file.files.count); Размер: \(size)"
             }
         }
         return cell
@@ -211,20 +246,13 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         }
     }
 
-    /*
-    // Override to support rearranging the table view.
     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
+        CoreDataManager.moveFileFromAllFiles(&self.files!, fromIndex: fromIndexPath.row, toIndex: toIndexPath.row)
     }
-    */
 
-    /*
-    // Override to support conditional rearranging of the table view.
     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
         return true
     }
-    */
 
 
     // MARK: - Navigation
