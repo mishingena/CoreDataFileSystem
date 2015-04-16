@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, SWTableViewCellDelegate {
+class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var folder: FileFolder?
     var selectedImage: UIImage?
@@ -48,7 +48,16 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     }
     
     override func viewDidAppear(animated: Bool) {
-        if let indexPath = self.selectedIndexPath {
+//        if let indexPath = self.selectedIndexPath {
+//            self.tableView.beginUpdates()
+//            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+//            self.tableView.endUpdates()
+//        }
+        self.reloadRowAtIndexPath(self.selectedIndexPath)
+    }
+    
+    func reloadRowAtIndexPath(indexPath: NSIndexPath?) {
+        if let indexPath = indexPath {
             self.tableView.beginUpdates()
             self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
             self.tableView.endUpdates()
@@ -71,13 +80,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.navigationItem.rightBarButtonItem = self.doneButton
     }
     
-    func leftUtilityButtons() -> [AnyObject] {
-        var leftButtons = NSMutableArray()
-        leftButtons.sw_addUtilityButtonWithColor(UIColor.orangeColor(), title: "Переименовать")
-        
-        return leftButtons as [AnyObject]
-    }
-    
     func doneButtonPressed(sender: AnyObject) {
         self.tableView.setEditing(false, animated: true)
         self.navigationItem.rightBarButtonItem = self.addButton
@@ -87,10 +89,10 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         let actionSheet = UIAlertController(title: nil, message: "Добавить", preferredStyle: .ActionSheet)
         
         let createFolderAction = UIAlertAction(title: "Папку", style: .Default) { (alert: UIAlertAction!) -> Void in
-            self.showEnterNameAlert(.Folder)
+            self.showEnterNameAlert(.Folder, action: .Add)
         }
         let createTextFileAction = UIAlertAction(title: "Текстовый файл", style: .Default) { (alert: UIAlertAction!) -> Void in
-            self.showEnterNameAlert(.TextFile)
+            self.showEnterNameAlert(.TextFile, action: .Add)
         }
         
         let createImageFileAction = UIAlertAction(title: "Изображение", style: .Default) { (alert: UIAlertAction!) -> Void in
@@ -106,46 +108,67 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.presentViewController(actionSheet, animated: true, completion: nil)
     }
     
-    func showEnterNameAlert(type: FileType) {
+    func showEnterNameAlert(type: FileType, action: ActionType, sender: File? = nil) {
         let title: String
         
         switch type {
-        case .Folder: title = "Введите название папки"
-        case .TextFile: title = "Введите название текстового файла"
-        case .ImageFile: title = "Введите название изображения"
+            case .Folder: title = "Введите название папки"
+            case .TextFile: title = "Введите название текстового файла"
+            case .ImageFile: title = "Введите название изображения"
         }
         
         let alertController = UIAlertController(title: title, message: "", preferredStyle: .Alert)
         let cancelAction = UIAlertAction(title: "Отмена", style: .Cancel) { (_) -> Void in }
-        let addAction = UIAlertAction(title: "Добавить", style: .Default) { (_) -> Void in
+        let addAction = UIAlertAction(title: (action == .Add ? "Добавить" : "Переименовать"), style: .Default) { (_) -> Void in
             let textFileld = alertController.textFields![0] as! UITextField
             let indexPath = NSIndexPath(forRow: self.folder!.files.count, inSection: 0)
             
             switch type {
             case .Folder:
-                let newFolder = FileFolder(name: textFileld.text)
+                if action == .Add {
+                    let newFolder = FileFolder(name: textFileld.text)
+                    CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newFolder, completed: { () -> () in
+                        self.files?.append(newFolder)
+                        self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                    })
+                }
+                if action == .Rename {
+                    let folder = sender as! FileFolder
+                    folder.name = textFileld.text
+                    CoreDataManager.sharedInstance.save()
+                    self.reloadRowAtIndexPath(self.selectedIndexPath)
+                }
                 
-                CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newFolder, completed: { () -> () in
-                    self.files?.append(newFolder)
-                    self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                })
 
             case .TextFile:
-                let newTextFile = FileText(name: textFileld.text)
-                
-                CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newTextFile, completed: { () -> () in
-                    self.files?.append(newTextFile)
-                    self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                })
+                if action == .Add {
+                    let newTextFile = FileText(name: textFileld.text)
+                    CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newTextFile, completed: { () -> () in
+                        self.files?.append(newTextFile)
+                        self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                    })
+                }
+                if action == .Rename {
+                    let textFile = sender as! FileText
+                    textFile.name = textFileld.text
+                    CoreDataManager.sharedInstance.save()
+                    self.reloadRowAtIndexPath(self.selectedIndexPath)
+                }
                 
             case .ImageFile:
-                let newImageFile = FileImage(name: textFileld.text, image: self.selectedImage!)
-                
-                CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newImageFile, completed: { () -> () in
-                    self.files?.append(newImageFile)
-                    self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                })
-
+                if action == .Add {
+                    let newImageFile = FileImage(name: textFileld.text, image: self.selectedImage!)
+                    CoreDataManager.sharedInstance.addFileToFolder(self.folder!, file: newImageFile, completed: { () -> () in
+                        self.files?.append(newImageFile)
+                        self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                    })
+                }
+                if action == .Rename {
+                    let imageFile = sender as! FileImage
+                    imageFile.name = textFileld.text
+                    CoreDataManager.sharedInstance.save()
+                    self.reloadRowAtIndexPath(self.selectedIndexPath)
+                }
             }
             
         }
@@ -178,7 +201,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
         self.selectedImage = image
         self.dismissViewControllerAnimated(true, completion: nil)
-        self.showEnterNameAlert(.ImageFile)
+        self.showEnterNameAlert(.ImageFile, action: .Add)
     }
     
 
@@ -195,9 +218,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FileCell
-        
-        cell.setLeftUtilityButtons(self.leftUtilityButtons(), withButtonWidth: 100.0)
-        cell.delegate = self
 
         if let files = self.files {
             let file  = files[indexPath.row]
@@ -225,6 +245,24 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         return cell
     }
     
+    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+        CoreDataManager.moveFileFromAllFiles(&self.files!, fromIndex: fromIndexPath.row, toIndex: toIndexPath.row)
+    }
+    
+    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    }
+    
+    
+    // MARK: - Table view delegate
+    
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.selectedIndexPath = indexPath
         let file  = self.files![indexPath.row]
@@ -240,41 +278,28 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         }
     }
     
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
+        let renameRowAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Rename") { (action, indexPath) -> Void in
+            println("rename cell at index \(indexPath.row)")
+            let file = self.files![indexPath.row]
+            self.selectedIndexPath = indexPath
+            self.showEnterNameAlert(file.getFileType()!, action: .Rename, sender: file)
+        }
+        renameRowAction.backgroundColor = UIColor.orangeColor()
+        
+        let deleteRowAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Удалить") { (action, indexPath) -> Void in
+            println("delete cell at index \(indexPath.row)")
             let file = self.files![indexPath.row]
             self.files?.removeAtIndex(indexPath.row)
             
             CoreDataManager.sharedInstance.deleteFile(file, fromFolder: self.folder!, completed: { () -> () in
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
             })
-            
         }
+        return [deleteRowAction, renameRowAction]
     }
 
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-        CoreDataManager.moveFileFromAllFiles(&self.files!, fromIndex: fromIndexPath.row, toIndex: toIndexPath.row)
-    }
 
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    
-    func swipeableTableViewCell(cell: SWTableViewCell!, didTriggerLeftUtilityButtonWithIndex index: Int) {
-        if index == 0 {
-            cell.hideUtilityButtonsAnimated(true)
-            //there must rename
-        }
-    }
-
-    func swipeableTableViewCellShouldHideUtilityButtonsOnSwipe(cell: SWTableViewCell!) -> Bool {
-        return true
-    }
-    
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

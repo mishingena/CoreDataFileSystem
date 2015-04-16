@@ -32,4 +32,8 @@ class FileFolder: File {
         self.name = name
     }
     
+    override func getFileType() -> FileType? {
+        return .Folder
+    }
+    
 }

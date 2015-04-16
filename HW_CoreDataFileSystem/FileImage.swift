@@ -38,4 +38,8 @@ class FileImage: File {
         self.image = image
     }
 
+    override func getFileType() -> FileType? {
+        return .ImageFile
+    }
+    
 }

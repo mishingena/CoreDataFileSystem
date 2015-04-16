@@ -29,4 +29,8 @@ class FileText: File {
         self.init()
         self.name = name
     }
+    
+    override func getFileType() -> FileType? {
+        return .TextFile
+    }
 }

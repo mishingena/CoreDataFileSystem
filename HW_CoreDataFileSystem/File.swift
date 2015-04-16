@@ -30,4 +30,7 @@ class File: NSManagedObject {
         self.name = name
     }
 
+    func getFileType() -> FileType? {
+        return nil
+    }
 }

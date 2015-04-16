@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FileCell: SWTableViewCell {
+class FileCell: UITableViewCell {
 
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var title: UILabel!

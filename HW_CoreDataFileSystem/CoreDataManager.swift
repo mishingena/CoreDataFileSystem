@@ -16,6 +16,11 @@ enum FileType {
     case ImageFile
 }
 
+enum ActionType {
+    case Add
+    case Rename
+}
+
 class CoreDataManager: NSObject {
     
     class var sharedInstance: CoreDataManager {
