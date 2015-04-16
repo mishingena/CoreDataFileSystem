@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>939DFF79-D02B-4D1F-B4B7-EB4A6D158F58</string>
+	<key>IDESourceControlProjectName</key>
+	<string>HW_CoreDataFileSystem</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D5C0DC435F9B7985CBA8583F1C9822898284EDDA</key>
+		<string>https://github.com/mishingena/CoreDataFileSystem.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>HW_CoreDataFileSystem.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D5C0DC435F9B7985CBA8583F1C9822898284EDDA</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/mishingena/CoreDataFileSystem.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D5C0DC435F9B7985CBA8583F1C9822898284EDDA</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D5C0DC435F9B7985CBA8583F1C9822898284EDDA</string>
+			<key>IDESourceControlWCCName</key>
+			<string>HW_CoreDataFileSystem</string>
+		</dict>
+	</array>
+</dict>
+</plist>

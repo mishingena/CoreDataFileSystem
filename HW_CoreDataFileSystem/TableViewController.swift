@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, SWTableViewCellDelegate {
     
     var folder: FileFolder?
     var selectedImage: UIImage?
@@ -69,6 +69,13 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     func handleLongPressGestures(sender: UILongPressGestureRecognizer) {
         self.tableView.setEditing(true, animated: true)
         self.navigationItem.rightBarButtonItem = self.doneButton
+    }
+    
+    func leftUtilityButtons() -> [AnyObject] {
+        var leftButtons = NSMutableArray()
+        leftButtons.sw_addUtilityButtonWithColor(UIColor.orangeColor(), title: "Переименовать")
+        
+        return leftButtons as [AnyObject]
     }
     
     func doneButtonPressed(sender: AnyObject) {
@@ -188,6 +195,9 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FileCell
+        
+        cell.setLeftUtilityButtons(self.leftUtilityButtons(), withButtonWidth: 100.0)
+        cell.delegate = self
 
         if let files = self.files {
             let file  = files[indexPath.row]
@@ -253,8 +263,18 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
     }
+    
+    func swipeableTableViewCell(cell: SWTableViewCell!, didTriggerLeftUtilityButtonWithIndex index: Int) {
+        if index == 0 {
+            cell.hideUtilityButtonsAnimated(true)
+            //there must rename
+        }
+    }
 
-
+    func swipeableTableViewCellShouldHideUtilityButtonsOnSwipe(cell: SWTableViewCell!) -> Bool {
+        return true
+    }
+    
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
