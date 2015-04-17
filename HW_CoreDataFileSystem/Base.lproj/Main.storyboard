@@ -151,6 +151,7 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="textView" destination="xNX-Ha-keP" id="OfU-bQ-WNN"/>
+                        <outlet property="textViewBottomConstraint" destination="NTd-Jo-rqm" id="ShK-zT-2zm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hgP-yM-BtG" userLabel="First Responder" sceneMemberID="firstResponder"/>
