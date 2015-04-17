@@ -30,16 +30,22 @@ class FileImage: File {
     convenience init(image: UIImage) {
         self.init()
         self.image = image
+        self.size = self.getSize()
     }
     
     convenience init(name: String, image: UIImage) {
         self.init()
         self.name = name
         self.image = image
+        self.size = self.getSize()
     }
 
     override func getFileType() -> FileType? {
         return .ImageFile
+    }
+    
+    func getSize() -> Int {
+        return UIImageJPEGRepresentation(image, 0).length
     }
     
 }

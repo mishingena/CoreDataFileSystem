@@ -32,6 +32,8 @@ class TextFileViewController: UIViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
+    //MARK: - Keyboard
+    
     func keyboardWillShow(notification: NSNotification) {
         let userInfo: NSDictionary = notification.userInfo!
         let keyboardSize = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()

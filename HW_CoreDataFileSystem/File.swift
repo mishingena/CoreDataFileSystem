@@ -14,6 +14,7 @@ class File: NSManagedObject {
 
     @NSManaged var name: String
     @NSManaged var creationDate: NSDate
+    @NSManaged var size: Int
     
     class var entity: NSEntityDescription {
         return NSEntityDescription.entityForName("File", inManagedObjectContext: CoreDataManager.sharedInstance.context)!
@@ -23,6 +24,7 @@ class File: NSManagedObject {
         self.init(entity: File.entity, insertIntoManagedObjectContext: CoreDataManager.sharedInstance.context)
         self.creationDate = NSDate()
         self.name = "unnamed"
+        self.size = 0
     }
     
     convenience init(name: String) {

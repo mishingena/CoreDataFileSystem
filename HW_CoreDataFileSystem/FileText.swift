@@ -33,4 +33,8 @@ class FileText: File {
     override func getFileType() -> FileType? {
         return .TextFile
     }
+    
+    func getSize() -> Int {
+        return text.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)
+    }
 }

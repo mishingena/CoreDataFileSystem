@@ -18,6 +18,9 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     var addButton: UIBarButtonItem?
     var doneButton: UIBarButtonItem?
     
+    
+    //MARK: - View Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.addGestures()
@@ -34,7 +37,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
             CoreDataManager.sharedInstance.getRootFolder({ (rootFile) -> () in
                 self.folder = rootFile
                 self.loadData()
-                
             })
         } else {
             self.loadData()
@@ -51,18 +53,13 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.reloadRowAtIndexPath(self.selectedIndexPath)
     }
     
-    func reloadRowAtIndexPath(indexPath: NSIndexPath?) {
-        if let indexPath = indexPath {
-            self.tableView.beginUpdates()
-            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
-            self.tableView.endUpdates()
-        }
-    }
-    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         CoreDataManager.sharedInstance.save()
     }
+    
+    
+    //MARK: - Gestures
     
     func addGestures() {
         let lpgs = UILongPressGestureRecognizer(target: self, action: "handleLongPressGestures:")
@@ -102,6 +99,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         actionSheet.addAction(cancelAction)
         self.presentViewController(actionSheet, animated: true, completion: nil)
     }
+    
     
     //MARK: - AlertController
     
@@ -203,6 +201,17 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
 
     // MARK: - Table view data source
+    
+    func reloadRowAtIndexPath(indexPath: NSIndexPath?) {
+        if let indexPath = indexPath {
+            let file = self.files![indexPath.row]
+            var total = 0
+            file.size = CoreDataManager.getSizeOfFile(file, total: &total)
+            self.tableView.beginUpdates()
+            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.endUpdates()
+        }
+    }
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -218,9 +227,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
 
         if let files = self.files {
             let file  = files[indexPath.row]
-            var total = 0
-            let sizeInBytes = CoreDataManager.getSizeOfFile(file, total: &total)
-            let size = FormattingHelper.getFormattedSizeFromByteSize(sizeInBytes)
+            let size = FormattingHelper.getFormattedSizeFromByteSize(file.size)
             
             switch file.getFileType()! {
             case .Folder:

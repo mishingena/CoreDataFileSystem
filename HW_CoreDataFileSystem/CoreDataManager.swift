@@ -30,8 +30,6 @@ class CoreDataManager: NSObject {
         return Singleton.instance
     }
     
-    
-    
     let coordinator: NSPersistentStoreCoordinator
     let model: NSManagedObjectModel
     let context: NSManagedObjectContext
@@ -127,10 +125,18 @@ class CoreDataManager: NSObject {
         })
     }
     
+    //MARK: - Class functions
+    
     class func getSortedFilesFromFolder(folder: FileFolder) -> [File] {
         var array = folder.files.allObjects as! [File]
         array.sort { (firstFile: File, secondFile:File) -> Bool in
             return (firstFile.creationDate.compare(secondFile.creationDate) == NSComparisonResult.OrderedAscending ? true : false)
+        }
+        //also calculate size
+        for object in folder.files {
+            var file = object as! File
+            var total = 0;
+            file.size = self.getSizeOfFile(file, total: &total)
         }
         return array
     }
@@ -147,15 +153,14 @@ class CoreDataManager: NSObject {
     }
     
     class func getSizeOfFile(file: File,inout total: Int) -> Int {
-        if file.isKindOfClass(FileText.self) {
+        switch file.getFileType()! {
+        case .TextFile:
             let file = file as! FileText
-            total += file.text.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)
-        }
-        if file.isKindOfClass(FileImage.self) {
+            total += file.getSize()
+        case .ImageFile:
             let file = file as! FileImage
-            total += UIImageJPEGRepresentation(file.image, 0).length
-        }
-        if file.isKindOfClass(FileFolder.self) {
+            total += file.getSize()
+        case .Folder:
             let folder = file as! FileFolder
             for file in folder.files {
                 self.getSizeOfFile(file as! File, total: &total)

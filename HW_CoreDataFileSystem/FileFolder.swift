@@ -30,6 +30,7 @@ class FileFolder: File {
     convenience init(name: String) {
         self.init()
         self.name = name
+        self.size = 0
     }
     
     override func getFileType() -> FileType? {
