@@ -132,12 +132,6 @@ class CoreDataManager: NSObject {
         array.sort { (firstFile: File, secondFile:File) -> Bool in
             return (firstFile.creationDate.compare(secondFile.creationDate) == NSComparisonResult.OrderedAscending ? true : false)
         }
-        //also calculate size
-        for object in folder.files {
-            var file = object as! File
-            var total = 0;
-            file.size = self.getSizeOfFile(file, total: &total)
-        }
         return array
     }
     

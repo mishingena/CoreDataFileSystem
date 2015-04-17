@@ -17,7 +17,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
     var addButton: UIBarButtonItem?
     var doneButton: UIBarButtonItem?
-    
+    var activityIndicator: UIActivityIndicatorView?
     
     //MARK: - View Lifecycle
     
@@ -33,9 +33,18 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.navigationItem.rightBarButtonItem = self.addButton
         self.navigationItem.rightBarButtonItem?.enabled = true
         
+        self.startActivityIndicator()
+        
         if self.folder == nil {
             CoreDataManager.sharedInstance.getRootFolder({ (rootFile) -> () in
                 self.folder = rootFile
+                
+                //also calculate size
+                for object in self.folder!.files {
+                    var file = object as! File
+                    var total = 0;
+                    file.size = CoreDataManager.getSizeOfFile(file, total: &total)
+                }
                 self.loadData()
             })
         } else {
@@ -47,6 +56,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.title = self.folder?.name
         self.files = CoreDataManager.getSortedFilesFromFolder(self.folder!)
         self.tableView.reloadData()
+        self.stopActivityIndicator()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -98,6 +108,26 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         actionSheet.addAction(createImageFileAction)
         actionSheet.addAction(cancelAction)
         self.presentViewController(actionSheet, animated: true, completion: nil)
+    }
+    
+    //MARK: - ActivityIndicator
+    
+    func startActivityIndicator() {
+        if self.activityIndicator == nil {
+            self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
+            self.activityIndicator!.color = UIColor.lightGrayColor()
+            self.activityIndicator!.center = self.view.center
+            self.view.addSubview(self.activityIndicator!)
+        }
+        self.activityIndicator?.hidden = false
+        self.activityIndicator!.startAnimating()
+    }
+    
+    func stopActivityIndicator() {
+        if let activityIndicator = self.activityIndicator {
+            activityIndicator.hidden = true
+            activityIndicator.stopAnimating()
+        }
     }
     
     
