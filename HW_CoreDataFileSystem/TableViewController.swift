@@ -48,11 +48,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     }
     
     override func viewDidAppear(animated: Bool) {
-//        if let indexPath = self.selectedIndexPath {
-//            self.tableView.beginUpdates()
-//            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
-//            self.tableView.endUpdates()
-//        }
         self.reloadRowAtIndexPath(self.selectedIndexPath)
     }
     
@@ -66,7 +61,7 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        CoreDataManager.sharedInstance.save()
     }
     
     func addGestures() {
@@ -107,6 +102,8 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         actionSheet.addAction(cancelAction)
         self.presentViewController(actionSheet, animated: true, completion: nil)
     }
+    
+    //MARK: - AlertController
     
     func showEnterNameAlert(type: FileType, action: ActionType, sender: File? = nil) {
         let title: String
@@ -225,22 +222,25 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
             let sizeInBytes = CoreDataManager.getSizeOfFile(file, total: &total)
             let size = FormattingHelper.getFormattedSizeFromByteSize(sizeInBytes)
             
-            if file.isKindOfClass(FileText.self) {
-                cell.imgView.image = UIImage(named: "text_file_icon")
-                cell.title.text = file.name
-                cell.detail.text = "Размер: \(size)"
-            }
-            if file.isKindOfClass(FileImage.self) {
-                cell.imageView?.image = UIImage(named: "photo_file_icon")
-                cell.title.text = file.name
-                cell.detail.text = "Размер: \(size)"
-            }
-            if file.isKindOfClass(FileFolder.self) {
+            switch file.getFileType()! {
+            case .Folder:
                 let file = file as! FileFolder
-                cell.imgView.image = UIImage(named: "folder_icon")
-                cell.title.text = file.name
+                if (cell.imageView?.image?.isEqual(UIImage(named: "folder_icon")) == nil) {
+                    cell.imgView.image = UIImage(named: "folder_icon")
+                }
                 cell.detail.text = "Файлов: \(file.files.count); Размер: \(size)"
+            case .TextFile:
+                if (cell.imageView?.image?.isEqual(UIImage(named: "text_file_icon")) == nil) {
+                    cell.imgView.image = UIImage(named: "text_file_icon")
+                }
+                cell.detail.text = "Размер: \(size)"
+            case .ImageFile:
+                if (cell.imageView?.image?.isEqual(UIImage(named: "photo_file_icon")) == nil) {
+                    cell.imgView.image = UIImage(named: "photo_file_icon")
+                }
+                cell.detail.text = "Размер: \(size)"
             }
+            cell.title.text = file.name
         }
         return cell
     }
@@ -267,20 +267,15 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         self.selectedIndexPath = indexPath
         let file  = self.files![indexPath.row]
         
-        if file.isKindOfClass(FileText.self) {
-            self.performSegueWithIdentifier("segueViewTextFile", sender: file)
-        }
-        if file.isKindOfClass(FileImage.self) {
-            self.performSegueWithIdentifier("segueViewImageFile", sender: file)
-        }
-        if file.isKindOfClass(FileFolder.self) {
-            self.performSegueWithIdentifier("segueToTableView", sender: file)
+        switch file.getFileType()! {
+            case .Folder: self.performSegueWithIdentifier("segueToTableView", sender: file)
+            case .TextFile: self.performSegueWithIdentifier("segueViewTextFile", sender: file)
+            case .ImageFile: self.performSegueWithIdentifier("segueViewImageFile", sender: file)
         }
     }
     
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         let renameRowAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Rename") { (action, indexPath) -> Void in
-            println("rename cell at index \(indexPath.row)")
             let file = self.files![indexPath.row]
             self.selectedIndexPath = indexPath
             self.showEnterNameAlert(file.getFileType()!, action: .Rename, sender: file)
@@ -288,7 +283,6 @@ class TableViewController: UITableViewController, UIAlertViewDelegate, UIImagePi
         renameRowAction.backgroundColor = UIColor.orangeColor()
         
         let deleteRowAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Удалить") { (action, indexPath) -> Void in
-            println("delete cell at index \(indexPath.row)")
             let file = self.files![indexPath.row]
             self.files?.removeAtIndex(indexPath.row)
             
